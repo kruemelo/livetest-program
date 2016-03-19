@@ -1,5 +1,5 @@
 
-run mocha tests in nwjs window
+programmable livetest workflows when running mocha tests in nwjs window
 
 ## Install
 
