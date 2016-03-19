@@ -248,7 +248,7 @@ position/resize main window
 
 ```
   program(mochaTest)
-    .position(0, 0)
+    .moveTo(0, 0)
     .resize(50, 50)
     .wait(1000)
     .do(function (next) {
