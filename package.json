@@ -1,0 +1,23 @@
+{
+  "name": "livetest-program",
+  "version": "0.0.1",
+  "description": "livetest program scripting",
+  "main": "livetest-program",
+  "scripts": {
+    "test": "livetest --config=./test/config.json"
+  },
+  "keywords": [
+    "livetest",
+    "program",
+    "mocha",
+    "nwjs"
+  ],
+  "author": "kruemelo",
+  "license": "MIT",
+  "dependencies": {
+    "livetest": "0.0.11"
+  },
+  "devDependencies": {
+    "jquery": "^2.2.2"
+  }
+}

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test page 1</title>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>hello!</h1>
+    <p>Press F5 in dev tools window to repeat all tests</p>
+    <button id="btn-clickme">click me</button>
+    <div id="result"></div>
+    <script type="text/javascript">
+      $('#btn-clickme').on('click', function () {
+        $('#result').text('yay!');
+      });
+    </script>
+  </body>
+</html>

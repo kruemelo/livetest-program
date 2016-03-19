@@ -1,0 +1,405 @@
+// livetest-program
+const fs = require('fs');
+const async = require('async');
+
+function LivetestProgram (mochaTest, timeout) {
+
+  var self = this;
+
+  if (mochaTest.constructor) {
+    if (mochaTest.constructor.name === 'Suite') {
+      mochaTest = mochaTest.ctx.currentTest || mochaTest.ctx.test;
+    }
+    else if (mochaTest.constructor.name === 'Context') {
+      mochaTest = mochaTest.test;
+    }
+  }
+
+  if (mochaTest.constructor && 
+    (mochaTest.constructor.name === 'Test' || mochaTest.constructor.name === 'Hook')) {
+    this.test = mochaTest;
+  }
+  else {
+    throw new TypeError('argument not a mocha test instance');
+  }
+
+  if ('undefined' !== timeout) {
+    this.test.timeout(timeout);
+  }
+
+  this.program = [];
+
+  this.typeDelay = 50;
+  this.doId = 0;
+
+  this.promised = {
+
+    wait: function (duration) {
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.wait(duration, resolve);
+        });
+      });
+      return self.promised;
+    },
+    
+    await: function (predicate) {
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.await(predicate, resolve);
+        });
+      });
+      return self.promised;
+    },
+    
+    log: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.log.apply(self, args);
+          resolve();
+        });
+      });
+      return self.promised;
+    },
+    
+    warn: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.warn.apply(self, args);
+          resolve();
+        });
+      });
+      return self.promised;
+    },
+    
+    error: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.error.apply(self, args);
+          resolve();
+        });
+      });
+      return self.promised;
+    },
+    
+    do: function (fn) {
+      self.program.push(function () { 
+        return new Promise (function (resolve, reject) {
+          var doId = ++self.doId;
+          self.log('do %d', doId);
+          fn.apply(self, [(err) => {
+            self.log('do %d done with error', doId, err);
+            if (err) {
+              reject(err);
+            }
+            else {
+              resolve();
+            }
+          }]);
+        });
+      });
+      return self.promised;
+    },
+
+    moveTo: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.moveTo.apply(self, args);
+          resolve();
+        });
+      });
+      return self.promised;      
+    },
+
+    resizeTo: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.resizeTo.apply(self, args);
+          resolve();
+        });
+      });
+      return self.promised;      
+    },
+
+    capture: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise (resolve => {
+          self.capture.apply(self, args);
+          resolve();
+        });
+      });
+      return self.promised;
+    },
+
+    type: function (selector, text) {
+      self.program.push(function () { 
+        return new Promise ((resolve, reject) => {
+          try {
+            self.type(selector, text, resolve);
+          }
+          catch (e) {
+            reject(e);
+          }
+        });
+      });
+      return self.promised;      
+    },
+
+    click: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise ((resolve, reject) => {
+          try {
+            self.click.apply(self, args);
+            resolve();
+          }
+          catch (e) {
+            reject(e);
+          }
+        });
+      });
+      return self.promised;      
+    },
+
+    run: function () {
+      const args = arguments;
+      self.run.apply(self, args);
+      return self.promised;
+    }
+
+  };  // this.promised
+} // LivetestProgram ctor
+
+
+LivetestProgram.prototype.getTestFilename = function () {
+  return this.test.ctx.filename;
+};
+
+
+LivetestProgram.prototype.getTestWindow = function () {
+  return this.test.ctx.getTestWindow();
+};
+
+
+LivetestProgram.prototype.getMainWindow = function () {
+  return this.test.ctx.getWindow();
+};
+
+
+LivetestProgram.prototype.getNwWindow = function () {
+  return this.getMainWindow().nw.Window.get();
+};
+
+
+LivetestProgram.prototype.getConsole = function () {
+  return this.getMainWindow().console;
+};
+
+
+LivetestProgram.prototype.getJQuery = function () {
+  return this.getTestWindow().$;
+};
+
+
+LivetestProgram.prototype.wait = function (duration, callback) {
+  this.log('wait %dms', duration);
+  setTimeout(callback, duration);
+  return this;
+};
+
+
+LivetestProgram.prototype.await = function (predicate, callback) {
+
+  var intervalID,
+    timeoutTime = Date.now() + this.test.timeout();
+
+  this.log('await predicate pass truth test until %s', new Date(timeoutTime));
+
+  intervalID = setInterval(() => {
+    if (Date.now() > timeoutTime) {
+      clearInterval(intervalID);
+    }
+    else if (predicate()) {
+      clearInterval(intervalID);
+      callback();
+    }
+  }, 200);
+
+  return this;
+};
+
+
+LivetestProgram.prototype.log = function () {
+  this.getConsole().log.apply(this.getConsole(), arguments);
+  return this;
+};
+
+
+LivetestProgram.prototype.warn = function () {
+  this.getConsole().warn.apply(this.getConsole(), arguments);
+  return this;
+};
+
+
+LivetestProgram.prototype.error = function () {
+  this.getConsole().error.apply(this.getConsole(), arguments);
+  return this;
+};
+
+
+LivetestProgram.prototype.moveTo = function (x, y) {
+  this.log('move main window to (%d, %d)', x, y);
+  this.getNwWindow().moveTo(x, y);
+  return this;
+};
+
+
+LivetestProgram.prototype.resizeTo = function (width, height) {
+  this.log('resize main window to (%d, %d)', width, height);
+  // resize main window: http://docs.nwjs.io/en/v0.13.0-rc3/References/Window/
+  this.getNwWindow().resizeTo(width, height);
+  return this;
+};
+
+
+LivetestProgram.prototype.capture = function (filename) {
+  
+  const config = {
+      format: 'png',
+      datatype: 'buffer' //'raw'
+    };
+  
+  this.log('capture page to file "%s"', filename);
+  
+  this.getNwWindow().capturePage(
+    (data) => {
+      fs.writeFileSync(filename, data);
+      // log('capture page to %s done', filename, data);
+    }, 
+    config
+  );
+
+  return this;
+};
+
+
+LivetestProgram.prototype.type = function (selector, text, callback) {
+
+  callback = callback || function () {};
+
+  const $target = this.getJQuery()(selector);
+  const delay = 50;
+
+  this.log('type text "%s" to selector "%s"', text, selector);
+  $target.focus();
+  async.eachSeries(
+    text.split(''),
+    (character, done) => {
+      setTimeout(() => {
+        $target.trigger({type: 'keydown', which: character.charCodeAt(0)});                    
+        $target.val($target.val() + character);
+        $target.trigger({type: 'keypress', which: character.charCodeAt(0)});
+        $target.trigger({type: 'keyup', which: character.charCodeAt(0)});
+        done();
+      }, delay);
+    },
+    () => {
+      setTimeout(callback, delay);
+    }
+  );
+
+  return this;
+};
+
+
+LivetestProgram.prototype.click = function (target) {
+  var $target;
+  try {
+    if ('object' === typeof target) {
+      $target = target;
+      this.log('click jquery object "%s"', target.selector);
+    }
+    else {
+      this.log('click selector string "%s"', target);
+      $target = this.getJQuery()(target);      
+    }
+    if ($target.length) {
+      $target.trigger('click');
+    }
+    else {
+      this.warn('click $("%s").length is 0', $target.selector);
+    }
+  }
+  catch (e) {
+    this.error(e);
+    throw e;
+  }
+
+  return this;
+};
+
+
+LivetestProgram.prototype.run = function (callback) {
+  var self = this,
+    stepCount = 0;
+
+  this.log('run');
+
+  if (!this.program.length) {
+    this.exit(callback);
+    return;
+  }
+
+  function next () {
+    
+    var step = self.program.shift(),
+      stepNumber = ++stepCount,
+      p;
+
+    if (step) {
+      self.log('next step #%d..', stepNumber);
+      p = step();
+      p.then(
+        function () {
+          self.log('resolved step #%d', stepNumber);              
+          next();
+        },
+        (err) => {
+          self.log('rejected step #%d for reason %s', stepNumber, err.message);
+          throw err;
+        }
+      );
+    }
+    else {
+      self.log('no step left, exit now');
+      self.exit(callback);
+    }
+  }
+
+  next();
+
+  return this;
+};
+
+
+LivetestProgram.prototype.exit = function (callback) {
+
+  this.log('exit');
+      
+  this.program.length = 0;
+
+  if (callback) {
+    callback();
+  }
+};  // exit
+
+
+module.exports = function (mochaTest) {
+  return (new LivetestProgram(mochaTest)).promised;
+};
