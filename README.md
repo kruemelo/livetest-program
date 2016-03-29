@@ -29,48 +29,10 @@ $ npm test
   
   const program = require('livetest-program');
 
-  const path = require('path');
-  const assert = require('chai').assert;    
-  const tmpdir = require('os').tmpdir();
+  describe('...', function () {
+    ...
 
-
-  describe('test 1', function () {
-
-    var testWindow, 
-      $,
-      testPath;
-
-    before(function (done) {
-
-      program(this, 3000)
-        .do(function (next) {
-
-          // test window context is available now
-          testWindow = this.getTestWindow();
-
-          this.log('test filename "%s"', this.getTestFilename());
-          
-          testPath = path.dirname(this.getTestFilename());
-          this.log('test path "%s"', testPath);
-
-          testWindow.location.assign(`file://${testPath}/test1.html`);
-
-          this.await(
-            () => {
-              return testWindow.$;
-            },
-            () => {
-              // test windows jquery is available now
-              $ = this.getJQuery();
-              next();
-            }
-          );
-        })
-        .run(done);
-    }); // before
-
-
-    it('should click', (done) => {
+    it('...', (done) => {
 
       assert.strictEqual($('#result').text(), '', 'result text should be empty');
 
@@ -78,19 +40,18 @@ $ npm test
         .wait(1000)
         .click('#btn-clickme')
         .wait(500)
-        .capture(path.join(tmpdir, 'livetest-program.clicktest.png'))
+        .capture('livetest-program.clicktest.png')
         .run(function () {
           assert.strictEqual($('#result').text(), 'yay!', 'result text should have value');
           done();
         });
-    }); // click
-
-
-  }); // describe test 1 
-
+    });
+  }); 
 }());
 
 ```
+
+see test/*Spec.js files for working examples
 
 ## Config file
 
