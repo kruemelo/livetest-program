@@ -24,7 +24,7 @@ function LivetestProgram (mochaTest, timeout) {
   }
 
   if ('undefined' !== timeout) {
-    this.log('set test timeout to %d', timeout);
+    // this.log('set test timeout to %d', timeout);
     this.test.timeout(timeout);
   }
 
@@ -90,9 +90,9 @@ function LivetestProgram (mochaTest, timeout) {
       self.program.push(function () { 
         return new Promise (function (resolve, reject) {
           var doId = ++self.doId;
-          self.log('do %d', doId);
+          // self.log('do %d', doId);
           fn.apply(self, [(err) => {
-            self.log('do %d done with error', doId, err);
+            // self.log('do %d done with error', doId, err);
             if (err) {
               reject(err);
             }
@@ -209,7 +209,7 @@ LivetestProgram.prototype.getJQuery = function () {
 
 
 LivetestProgram.prototype.wait = function (duration, callback) {
-  this.log('wait %dms', duration);
+  // this.log('wait %dms', duration);
   setTimeout(callback, duration);
   return this;
 };
@@ -220,7 +220,7 @@ LivetestProgram.prototype.await = function (predicate, callback) {
     timeoutTime = Date.now() + (this.test.timeout() || 3000),
     $ = this.getJQuery();
 
-  this.log('await predicate pass truth test until %s', new Date(timeoutTime));
+  // this.log('await predicate pass truth test until %s', new Date(timeoutTime));
 
   function test () {
     if ('string' === typeof predicate) {
@@ -264,14 +264,14 @@ LivetestProgram.prototype.error = function () {
 
 
 LivetestProgram.prototype.moveTo = function (x, y) {
-  this.log('move main window to (%d, %d)', x, y);
+  // this.log('move main window to (%d, %d)', x, y);
   this.getNwWindow().moveTo(x, y);
   return this;
 };
 
 
 LivetestProgram.prototype.resizeTo = function (width, height) {
-  this.log('resize main window to (%d, %d)', width, height);
+  // this.log('resize main window to (%d, %d)', width, height);
   // resize main window: http://docs.nwjs.io/en/v0.13.0-rc3/References/Window/
   this.getNwWindow().resizeTo(width, height);
   return this;
@@ -285,7 +285,7 @@ LivetestProgram.prototype.capture = function (filename) {
       datatype: 'buffer' //'raw'
     };
   
-  this.log('capture page to file "%s"', filename);
+  // this.log('capture page to file "%s"', filename);
   
   this.getNwWindow().capturePage(
     (data) => {
@@ -306,7 +306,7 @@ LivetestProgram.prototype.type = function (selector, text, callback) {
   const $target = this.getJQuery()(selector);
   const delay = 50;
 
-  this.log('type text "%s" to selector "%s"', text, selector);
+  // this.log('type text "%s" to selector "%s"', text, selector);
   $target.focus();
   async.eachSeries(
     text.split(''),
@@ -333,12 +333,13 @@ LivetestProgram.prototype.click = function (target) {
   try {
     if ('object' === typeof target) {
       $target = target;
-      this.log('click jquery object "%s"', target.selector);
+      // this.log('click jquery object "%s"', target.selector);
     }
     else {
-      this.log('click selector string "%s"', target);
+      // this.log('click selector string "%s"', target);
       $target = this.getJQuery()(target);      
     }
+    
     if ($target.length) {
       $target.trigger('click');
     }
@@ -359,7 +360,7 @@ LivetestProgram.prototype.run = function (callback) {
   var self = this,
     stepCount = 0;
 
-  this.log('run');
+  // this.log('run');
 
   if (!this.program.length) {
     this.exit(callback);
@@ -373,21 +374,21 @@ LivetestProgram.prototype.run = function (callback) {
       p;
 
     if (step) {
-      self.log('next step #%d..', stepNumber);
+      // self.log('next step #%d..', stepNumber);
       p = step();
       p.then(
         function () {
-          self.log('resolved step #%d', stepNumber);              
+          // self.log('resolved step #%d', stepNumber);              
           next();
         },
         (err) => {
-          self.log('rejected step #%d for reason %s', stepNumber, err.message);
+          // self.log('rejected step #%d for reason %s', stepNumber, err.message);
           throw err;
         }
       );
     }
     else {
-      self.log('no step left, exit now');
+      // self.log('no step left, exit now');
       self.exit(callback);
     }
   }
@@ -400,7 +401,7 @@ LivetestProgram.prototype.run = function (callback) {
 
 LivetestProgram.prototype.exit = function (callback) {
 
-  this.log('exit');
+  // this.log('exit');
       
   this.program.length = 0;
 
