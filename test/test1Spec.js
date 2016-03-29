@@ -53,7 +53,11 @@
       assert.strictEqual($('#result').text(), '', 'result text should be empty');
 
       program(this, 3000)
-        .wait(1000)
+        .do(function (next) {
+          this.log(this.test);
+          next();
+        })
+        .await('#btn-clickme')
         .click('#btn-clickme')
         .wait(500)
         .capture(path.join(tmpdir, 'livetest-program.clicktest.png'))

@@ -172,7 +172,9 @@ get the test window $
     .run();
 ```
 
-### await (predicate) {
+### await (predicate) 
+### await (selector)
+
 
 ```
   program(mochaTest)
@@ -183,6 +185,15 @@ get the test window $
     .log('message box element available now')
     .run();
 ```
+
+with argument as a selector string
+```
+  program(mochaTest)
+    .await('.controls .desired-classname')
+    .log('desired element in controls is available now')
+    .run();
+```
+
 
 ### log ()
 ### warn () 

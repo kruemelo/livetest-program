@@ -1,6 +1,6 @@
 {
   "name": "livetest-program",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "livetest program scripting",
   "main": "livetest-program",
   "scripts": {

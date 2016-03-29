@@ -24,6 +24,7 @@ function LivetestProgram (mochaTest, timeout) {
   }
 
   if ('undefined' !== timeout) {
+    this.log('set test timeout to %d', timeout);
     this.test.timeout(timeout);
   }
 
@@ -215,21 +216,30 @@ LivetestProgram.prototype.wait = function (duration, callback) {
 
 
 LivetestProgram.prototype.await = function (predicate, callback) {
-
   var intervalID,
-    timeoutTime = Date.now() + this.test.timeout();
+    timeoutTime = Date.now() + (this.test.timeout() || 3000),
+    $ = this.getJQuery();
 
   this.log('await predicate pass truth test until %s', new Date(timeoutTime));
+
+  function test () {
+    if ('string' === typeof predicate) {
+      return !!$(predicate).length;
+    }
+    else {
+      return !!predicate();
+    }
+  }
 
   intervalID = setInterval(() => {
     if (Date.now() > timeoutTime) {
       clearInterval(intervalID);
     }
-    else if (predicate()) {
+    else if (test()) {
       clearInterval(intervalID);
       callback();
     }
-  }, 200);
+  }, 100);
 
   return this;
 };
@@ -400,6 +410,6 @@ LivetestProgram.prototype.exit = function (callback) {
 };  // exit
 
 
-module.exports = function (mochaTest) {
-  return (new LivetestProgram(mochaTest)).promised;
+module.exports = function (mochaTest, timeout) {
+  return (new LivetestProgram(mochaTest, timeout)).promised;
 };
