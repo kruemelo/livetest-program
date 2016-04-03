@@ -55,7 +55,7 @@
           next();
         })
         .run(done);
-    }); // click
+    }); // type
 
 
   }); // describe test 1 

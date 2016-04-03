@@ -48,7 +48,7 @@
     }); // before
 
 
-    it('should click', (done) => {
+    it('should click', done => {
 
       assert.strictEqual($('#result').text(), '', 'result text should be empty');
 
@@ -66,6 +66,22 @@
           done();
         });
     }); // click
+
+
+    it('should one() and trigger', done => {
+
+      var triggered = false;
+
+      program(this, 2000)
+        .one('click', '#btn-continue', function () {
+          triggered = true;
+        })
+        .trigger('#btn-continue', 'click')
+        .run(function () {
+          assert(triggered, 'should have triggered');
+          done();
+        });
+    }); // trigger
 
 
   }); // describe test 1 

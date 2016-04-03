@@ -138,6 +138,54 @@ function LivetestProgram (mochaTest, timeout) {
       return self.promised;
     },
 
+    one: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise ((resolve, reject) => {
+          try {
+            self.one.apply(self, args);
+            resolve();
+          }
+          catch (e) {
+            reject(e);
+          }
+        });
+      });
+      return self.promised;   
+    },
+
+    on: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise ((resolve, reject) => {
+          try {
+            self.on.apply(self, args);
+            resolve();
+          }
+          catch (e) {
+            reject(e);
+          }
+        });
+      });
+      return self.promised;   
+    },
+
+    trigger: function () {
+      const args = arguments;
+      self.program.push(function () { 
+        return new Promise ((resolve, reject) => {
+          try {
+            self.trigger.apply(self, args);
+            resolve();
+          }
+          catch (e) {
+            reject(e);
+          }
+        });
+      });
+      return self.promised;   
+    },
+
     type: function (selector, text) {
       self.program.push(function () { 
         return new Promise ((resolve, reject) => {
@@ -299,6 +347,30 @@ LivetestProgram.prototype.capture = function (filename) {
 };
 
 
+LivetestProgram.prototype.on = function (eventName, selector, fn) {
+  const $target = selector && selector.jquery ?
+    selector : this.getJQuery()(selector);
+  $target.on(eventName, fn);
+  return this;
+};
+
+
+LivetestProgram.prototype.one = function (eventName, selector, fn) {
+  const $target = selector && selector.jquery ?
+    selector : this.getJQuery()(selector);
+  $target.one(eventName, fn);
+  return this;
+};
+
+
+LivetestProgram.prototype.trigger = function (selector, event) {
+  const $target = selector && selector.jquery ?
+    selector : this.getJQuery()(selector);
+  $target.trigger(event);
+  return this;
+};
+
+
 LivetestProgram.prototype.type = function (selector, text, callback) {
 
   callback = callback || function () {};
@@ -312,14 +384,16 @@ LivetestProgram.prototype.type = function (selector, text, callback) {
     text.split(''),
     (character, done) => {
       setTimeout(() => {
-        $target.trigger({type: 'keydown', which: character.charCodeAt(0)});                    
+        let charCode = character.charCodeAt(0);
+        $target.trigger({type: 'keydown', which: charCode});                    
         $target.val($target.val() + character);
-        $target.trigger({type: 'keypress', which: character.charCodeAt(0)});
-        $target.trigger({type: 'keyup', which: character.charCodeAt(0)});
+        $target.trigger({type: 'keypress', which: charCode});
+        $target.trigger({type: 'keyup', which: charCode});
         done();
       }, delay);
     },
     () => {
+      $target.trigger('change');
       setTimeout(callback, delay);
     }
   );

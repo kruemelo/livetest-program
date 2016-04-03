@@ -37,7 +37,7 @@ $ npm test
       assert.strictEqual($('#result').text(), '', 'result text should be empty');
 
       program(this, 5000)
-        .wait(1000)
+        .await('#btn-clickme')
         .click('#btn-clickme')
         .wait(500)
         .capture('livetest-program.clicktest.png')
@@ -248,6 +248,28 @@ captures the page to png file
     .run();
 ```  
 
+### on (eventName, selector, fn)
+### one (eventName, selector, fn)
+
+attach a handler to an event for the selector elements
+
+```
+  program(mochaTest)
+    .on('click', '#btn-continue', function (ev) {
+      triggered = true;
+    })
+```
+Use one() to execute the handler at most once.
+
+### trigger (selector, event)
+
+trigger an event 
+
+```
+  program(mochaTest)
+    .trigger('#btn-continue', 'click')
+```
+
 ### type (selector, text) 
 
 simulate typing a text
@@ -260,7 +282,7 @@ simulate typing a text
     })
     .run();
 ```  
-
+when finished, this also triggers the 'change' event
 
 ### click (target) 
 
