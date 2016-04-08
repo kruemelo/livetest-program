@@ -1,6 +1,6 @@
 {
   "name": "livetest-program",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "livetest program scripting",
   "main": "livetest-program",
   "scripts": {
@@ -19,7 +19,7 @@
   "author": "kruemelo",
   "license": "MIT",
   "dependencies": {
-    "livetest": "0.0.12"
+    "livetest": "0.0.13"
   },
   "devDependencies": {
     "jquery": "^2.2.3"
