@@ -258,7 +258,9 @@ LivetestProgram.prototype.getJQuery = function () {
 
 LivetestProgram.prototype.wait = function (duration, callback) {
   // this.log('wait %dms', duration);
-  setTimeout(callback, duration);
+  setTimeout(() => {
+    callback.apply(this, []);
+  }, duration);
   return this;
 };
 
@@ -285,7 +287,7 @@ LivetestProgram.prototype.await = function (predicate, callback) {
     }
     else if (test()) {
       clearInterval(intervalID);
-      callback();
+      callback.apply(this, []);
     }
   }, 100);
 
@@ -394,7 +396,9 @@ LivetestProgram.prototype.type = function (selector, text, callback) {
     },
     () => {
       $target.trigger('change');
-      setTimeout(callback, delay);
+      setTimeout(() => {
+        callback.apply(this, []);
+      }, delay);
     }
   );
 
@@ -463,7 +467,9 @@ LivetestProgram.prototype.run = function (callback) {
     }
     else {
       // self.log('no step left, exit now');
-      self.exit(callback);
+      self.exit(() => {
+        callback.apply(this, []);
+      });
     }
   }
 

@@ -67,6 +67,18 @@
         });
     }); // click
 
+    it('should have program as this context in await callback', done => {
+
+      program(this)
+        .do(function (next) {
+          var thisCtx = this;
+          this.await(() => true, function () {
+            assert.strictEqual(this, thisCtx);
+            next();
+          });
+        })
+        .run(done);
+    });
 
     it('should one() and trigger', done => {
 
