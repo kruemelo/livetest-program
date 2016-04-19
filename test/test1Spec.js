@@ -48,6 +48,23 @@
     }); // before
 
 
+
+    it('should have program as this context in run callback', done => {
+
+      var programCtx;
+
+      program(this)
+        .do(function (next) {
+          programCtx = this;
+          next();
+        }) 
+        .run(function () {
+          assert.strictEqual(this, programCtx);
+          done();
+        });
+    });
+
+
     it('should click', done => {
 
       assert.strictEqual($('#result').text(), '', 'result text should be empty');

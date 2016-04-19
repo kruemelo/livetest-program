@@ -450,7 +450,7 @@ LivetestProgram.prototype.run = function (callback) {
   function next () {
     
     var step = self.program.shift(),
-      stepNumber = ++stepCount,
+      // stepNumber = ++stepCount,
       p;
 
     if (step) {
@@ -470,7 +470,7 @@ LivetestProgram.prototype.run = function (callback) {
     else {
       // self.log('no step left, exit now');
       self.exit(() => {
-        callback.apply(this, []);
+        callback.apply(self, []);
       });
     }
   }
