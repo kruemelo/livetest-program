@@ -269,13 +269,14 @@ LivetestProgram.prototype.await = function (predicate, callback) {
   var self = this,
     intervalID,
     timeoutTime = Date.now() + (this.test.timeout() || 3000),
-    $ = this.getJQuery();
+    $;
 
   // this.log('await predicate pass truth test until %s', new Date(timeoutTime));
 
   function test () {
     if ('string' === typeof predicate) {
-      return !!$(predicate).length;
+      $ = self.getJQuery();
+      return !!($ && $(predicate).length);
     }
     else {
       return !!predicate.apply(self);
