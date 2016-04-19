@@ -80,6 +80,19 @@
         .run(done);
     });
 
+    it('should have program as this context in await predicate', done => {
+
+      program(this)
+        .do(function (next) {
+          var thisCtx = this;
+          this.await(function () {
+            assert.strictEqual(this, thisCtx);
+            return true;
+          }, next);
+        })
+        .run(done);
+    });
+
     it('should one() and trigger', done => {
 
       var triggered = false;

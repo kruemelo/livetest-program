@@ -266,7 +266,8 @@ LivetestProgram.prototype.wait = function (duration, callback) {
 
 
 LivetestProgram.prototype.await = function (predicate, callback) {
-  var intervalID,
+  var self = this,
+    intervalID,
     timeoutTime = Date.now() + (this.test.timeout() || 3000),
     $ = this.getJQuery();
 
@@ -277,7 +278,7 @@ LivetestProgram.prototype.await = function (predicate, callback) {
       return !!$(predicate).length;
     }
     else {
-      return !!predicate();
+      return !!predicate.apply(self);
     }
   }
 
