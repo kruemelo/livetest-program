@@ -221,7 +221,7 @@ position/resize main window
 ```
   program(mochaTest)
     .moveTo(0, 0)
-    .resize(50, 50)
+    .resizeTo(50, 50)
     .wait(1000)
     .do(function (next) {
       this.moveTo(100, 100);
@@ -237,7 +237,7 @@ captures the page to png file
 
 ```
   program(mochaTest)
-    .resize(320, 240)
+    .resizeTo(320, 240)
     .capture('/tmp/livetest-programm-xs.png')
     .wait(1000)
     .do(function (next) {
