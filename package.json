@@ -1,10 +1,10 @@
 {
   "name": "livetest-program",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "livetest program scripting",
   "main": "livetest-program",
   "scripts": {
-    "test": "livetest --config=./test/config.json"
+    "test": "livetest --config=./test/config.json --user-data-dir=livetest-program"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
   "author": "kruemelo",
   "license": "MIT",
   "dependencies": {
-    "livetest": "0.0.15"
+    "livetest": "0.0.16"
   },
   "devDependencies": {
     "jquery": "^2.2.3"
