@@ -10,6 +10,7 @@ npm i livetest-program --save-dev
 ## Usage
 
 ```bash
+$ node node_modules/.bin/livetest
 $ node livetest --config=./test/config.json
 ```
 
@@ -18,21 +19,21 @@ Press F5 in dev tools window to repeat all tests.
 If you want to run multiple instances, add the `--user-data-dir` option to start nw with different profiles:
 
 ```bash
-$ node livetest --user-data-dir=first-profile & 
+$ node livetest --user-data-dir=first-profile &
 $ node livetest --user-data-dir=second-profile
 ```
 
 ## Test
 
 ```bash
-$ npm test 
+$ npm test
 ```
 
 ## Mocha spec file usage
 
 ```
 ;(function () {
-  
+
   const program = require('livetest-program');
 
   describe('...', function () {
@@ -52,7 +53,7 @@ $ npm test
           done();
         });
     });
-  }); 
+  });
 }());
 
 ```
@@ -74,7 +75,7 @@ see test/*Spec.js files for working examples
 
 ### program(mochaTest[, timeout])
 
-start program description 
+start program description
 
 ```
 describe('suite', function () {
@@ -86,7 +87,7 @@ describe('suite', function () {
       .run(done)
   });
 });
-      
+
 ```
 
 also works in before():
@@ -101,11 +102,11 @@ describe('suite', function () {
       .run(done)
   });
 });
-      
+
 ```
 
-### getTestFilename () 
-  
+### getTestFilename ()
+
 returns the current test filename;
 
 ```
@@ -115,9 +116,9 @@ returns the current test filename;
       ..
 ```
 
-### getTestWindow () 
+### getTestWindow ()
 
-returns the test window object 
+returns the test window object
 
 ```
   program(mochaTest)
@@ -127,9 +128,9 @@ returns the test window object
       ..
 ```
 
-### getMainWindow () 
+### getMainWindow ()
 
-returns the main window object 
+returns the main window object
 
 ```
   program(mochaTest)
@@ -139,13 +140,13 @@ returns the main window object
 ```
 
 
-### getNwWindow () 
+### getNwWindow ()
 
 returns the NW-Window Object
 
 see [nw docs](http://docs.nwjs.io/en/v0.13.0-rc3/References/Window/)
 
-### getConsole () 
+### getConsole ()
 
 get the main window console
 
@@ -159,7 +160,7 @@ get the main window console
 
 ```
 
-### getJQuery () 
+### getJQuery ()
 
 get the test window $
 
@@ -169,7 +170,7 @@ get the test window $
 ```
 
 
-### wait (duration ms) 
+### wait (duration ms)
 
 ```
   program(mochaTest)
@@ -178,13 +179,13 @@ get the test window $
     .run();
 ```
 
-### await (predicate) 
+### await (predicate)
 ### await (selector)
 
 
 ```
   program(mochaTest)
-    .await(function () { 
+    .await(function () {
       // if returns truthy, wait ends
       return $('.msgbox').length;
     })
@@ -202,8 +203,8 @@ with argument as a selector string
 
 
 ### log ()
-### warn () 
-### error () 
+### warn ()
+### error ()
 
 ```
   var n = 0;
@@ -219,7 +220,7 @@ with argument as a selector string
   // => message 2
 ```
 
-### moveTo (x, y) 
+### moveTo (x, y)
 ### resizeTo (width, height) {
 
 position/resize main window
@@ -237,8 +238,8 @@ position/resize main window
     .run();
 ```
 
-### capture (filename) 
-  
+### capture (filename)
+
 captures the page to png file
 
 ```
@@ -269,14 +270,14 @@ Use one() to execute the handler at most once.
 
 ### trigger (selector, event)
 
-trigger an event 
+trigger an event
 
 ```
   program(mochaTest)
     .trigger('#btn-continue', 'click')
 ```
 
-### type (selector, text) 
+### type (selector, text)
 
 simulate typing a text
 
@@ -290,9 +291,9 @@ simulate typing a text
 ```  
 when finished, this also triggers the 'change' event
 
-### click (target) 
+### click (target)
 
-simulate click 
+simulate click
 
 ```
   program(mochaTest)
@@ -304,7 +305,7 @@ simulate click
     .run();
 ```  
 
-### run ([callback]) 
+### run ([callback])
 
 run the program
 
